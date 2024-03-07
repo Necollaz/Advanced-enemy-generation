@@ -1,6 +1,15 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+public static class PlayerAnimationData
+{
+    public static class Params
+    {
+        public static readonly int Run = Animator.StringToHash("isRun");
+        public static readonly int Walk = Animator.StringToHash("isWalk");
+        public static readonly int Attack = Animator.StringToHash("isAttack");
+    }
+}
 
 public class Player : MonoBehaviour
 {
@@ -26,7 +35,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         Move();
-        SetAnimations();
+        SetupAnimations();
     }
 
     private void Move()
@@ -35,7 +44,7 @@ public class Player : MonoBehaviour
         float horizontalDirection = Input.GetAxis(Horizontal);
         Vector3 movement = new Vector3(horizontalDirection, 0f, verticalDirection).normalized * _moveSpeed * Time.deltaTime;
 
-        if(Input.GetKey(KeyCode.LeftShift) && verticalDirection > 0)
+        if(Input.GetKey(KeyCode.LeftShift) && (verticalDirection != 0 || horizontalDirection != 0))
         {
             _isRunning = true;
             movement *= _runSpeedMultiplier;
@@ -60,27 +69,14 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void SetAnimations()
+    private void SetupAnimations()
     {
-        if (_isRunning)
-        {
-            _animator.SetBool("isRun", true);
-            _animator.SetBool("isWalk", false);
-        }
-        else if(_rigidbody.velocity.magnitude > 0)
-        {
-            _animator.SetBool("isWalk", true);
-            _animator.SetBool("isRun", false);
-        }
-        else
-        {
-            _animator.SetBool("isWalk", false);
-            _animator.SetBool("isRun", false);
-        }
+        _animator.SetBool(PlayerAnimationData.Params.Run, _isRunning);
+        _animator.SetBool(PlayerAnimationData.Params.Walk, !_isRunning && _rigidbody.velocity.magnitude > 0);
 
         if (Input.GetMouseButton(0) && _canHit)
         {
-            _animator.SetTrigger("isAttack");
+            _animator.SetTrigger(PlayerAnimationData.Params.Attack);
             StartCoroutine(Reload());
         }
     }

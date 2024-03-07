@@ -1,20 +1,22 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private Transform[] _spawnPoints;
-    [SerializeField] private GameObject[] _enemyObjects;
+    [SerializeField] private Rigidbody[] _enemyPrefab;
     [SerializeField] private Transform[] _targets;
     [SerializeField] private float _timeToSpawn;
     [SerializeField] private bool _canSpawn = true;
 
     private Transform[] _spawnTarget;
+    private WaitForSeconds _spawnWait;
+    private bool _isSpawning = false;
 
     private void Start()
     {
         InitializeSpawnTargets();
+        _spawnWait = new WaitForSeconds(_timeToSpawn);
         StartCoroutine(Spawner());
     }
 
@@ -31,10 +33,10 @@ public class EnemySpawner : MonoBehaviour
     private void Spawn()
     {
         int randomSpawnIndex = Random.Range(0, _spawnPoints.Length);
-        int randomEnemyIndex = Random.Range(0, _enemyObjects.Length);
+        int randomEnemyIndex = Random.Range(0, _enemyPrefab.Length);
 
         Transform spawnPoint = _spawnPoints[randomSpawnIndex];
-        GameObject enemyObject = Instantiate(_enemyObjects[randomEnemyIndex]);
+        Rigidbody enemyObject = Instantiate(_enemyPrefab[randomEnemyIndex]);
         enemyObject.transform.position = spawnPoint.position;
         Transform target = _spawnTarget[randomSpawnIndex];
         Enemy enemyComponent = enemyObject.GetComponent<Enemy>();
@@ -49,8 +51,17 @@ public class EnemySpawner : MonoBehaviour
     {
         while (_canSpawn)
         {
-            yield return new WaitForSeconds(_timeToSpawn);
-            Spawn();
+            if (!_isSpawning)
+            {
+                _isSpawning = true;
+                Spawn();
+                yield return _spawnWait;
+                _isSpawning = false;
+            }
+            else
+            {
+                yield return null;
+            }
         }
     }
 }

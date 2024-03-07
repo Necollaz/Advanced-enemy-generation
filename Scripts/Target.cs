@@ -14,7 +14,7 @@ public class Target : MonoBehaviour
         SetRandomWaypoint();
     }
 
-    void Update()
+    private void Update()
     {
         MoveToWaypoint();
     }
