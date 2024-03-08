@@ -4,7 +4,7 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private Transform[] _spawnPoints;
-    [SerializeField] private Rigidbody[] _enemyPrefabs;
+    [SerializeField] private GameObject[] _prefabs;
     [SerializeField] private Transform[] _targets;
     [SerializeField] private float _timeToSpawn;
     [SerializeField] private bool _canSpawn = true;
@@ -29,7 +29,7 @@ public class EnemySpawner : MonoBehaviour
         for (int i = 0; i < _spawnPoints.Length; i++)
         {
             _spawnTarget[i] = _targets[i % _targets.Length];
-            _enemyPrefabIndex[i] = i % _enemyPrefabs.Length;
+            _enemyPrefabIndex[i] = i % _prefabs.Length;
         }
     }
 
@@ -38,8 +38,8 @@ public class EnemySpawner : MonoBehaviour
         int randomSpawnIndex = Random.Range(0, _spawnPoints.Length);
 
         Transform spawnPoint = _spawnPoints[randomSpawnIndex];
-        Rigidbody enemyPrefab = _enemyPrefabs[_enemyPrefabIndex[randomSpawnIndex]];
-        Rigidbody enemyObject = Instantiate(enemyPrefab);
+        GameObject enemyPrefab = _prefabs[_enemyPrefabIndex[randomSpawnIndex]];
+        GameObject enemyObject = Instantiate(enemyPrefab);
         enemyObject.transform.position = spawnPoint.position;
         Transform target = _spawnTarget[randomSpawnIndex];
         Enemy enemyComponent = enemyObject.GetComponent<Enemy>();

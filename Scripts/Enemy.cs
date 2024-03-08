@@ -5,11 +5,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float _speed;
     [SerializeField] private Transform _target;
 
-    public void SetTarget(Transform target)
-    {
-        _target = target;
-    }
-
     private void Update()
     {
         if(_target != null)
@@ -17,6 +12,11 @@ public class Enemy : MonoBehaviour
             MoveTowardsPlayer();
             RotateTowardsPlayer();
         }
+    }
+
+    public void SetTarget(Transform target)
+    {
+        _target = target;
     }
 
     private void MoveTowardsPlayer()
