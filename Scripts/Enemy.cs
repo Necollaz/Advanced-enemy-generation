@@ -9,7 +9,7 @@ public class Enemy : MonoBehaviour
     {
         if(_target != null)
         {
-            MoveTowardsPlayer();
+            MoveTowardsTarget();
             RotateTowardsPlayer();
         }
     }
@@ -19,12 +19,12 @@ public class Enemy : MonoBehaviour
         _target = target;
     }
 
-    private void MoveTowardsPlayer()
+    private void MoveTowardsTarget()
     {
         if(_target != null)
         {
             Vector3 direction = _target.position - transform.position;
-            transform.position += direction.normalized * _speed * Time.deltaTime;
+            transform.Translate(direction.normalized * _speed * Time.deltaTime, Space.World);
         }
     }
 
